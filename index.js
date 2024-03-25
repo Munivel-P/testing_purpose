@@ -22,7 +22,7 @@ async function fetchData(coinId) {
   }
 }
 
-app.get('/:id', async (req, res) => {
+app.get('api/:id', async (req, res) => {
   try {
     const coinId = req.params.id;
     const data = await fetchData(coinId);

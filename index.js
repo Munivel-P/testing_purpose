@@ -1,91 +1,42 @@
-// const express = require('express');
-// const fetch = require('node-fetch');
-
-// const app = express();
-// const port = 3000;
-
-// async function fetchData() {
-//   try {
-//     const response = await fetch('https://api.coinpaprika.com/v1/coins/btc-bitcoin');
-//     const data = await response.json();
-//     return data;
-//   } catch (error) {
-//     console.error('Error fetching data:', error);
-//     throw error;
-//   }
-// }
-
-// app.get('/', async (req, res) => {
-//   try {
-//     const data = await fetchData();
-//     res.json(data);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
-// app.listen(port, () => {
-//   console.log(`Server is running on http://localhost:${port}`);
-// });
-
-
-
-
 const express = require("express");
-const fetch =require('node-fetch');
+const fetch = require('node-fetch');
 
 const app = express();
 const port = 3000;
 
-// app.get("/", function (req, res) {
-//   res.send("Hello World!");
-
-async function fetchData() {
+async function fetchData(coinId) {
   try {
-
-
-
-    const response = await fetch('https://api.coinpaprika.com/v1/coins/btc-bitcoin');
-;
+    const response = await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`);
     const data = await response.json();
 
-    // Extract id and name fields
-const { id, name, symbol,rank,is_new,is_active,type,logo,description,message,open_source,started_at,development_status,hardware_wallet,proof_type,org_structure,hash_algorithm,first_data_at,last_data_at} = data;
+    // Extract necessary fields from the data object
+    const { id, name, symbol, rank, is_new, is_active, type, logo, description, message, open_source, started_at, development_status, hardware_wallet, proof_type, org_structure, hash_algorithm, first_data_at, last_data_at } = data;
 
-// Create a new object with only id and name fields
-const newJsonObject = {  id, name, symbol,rank,is_new,is_active,type,logo,description,message,open_source,started_at,development_status,hardware_wallet,proof_type,org_structure,hash_algorithm,first_data_at,last_data_at};
+    // Create a new object with the extracted fields
+    const newJsonObject = { id, name, symbol, rank, is_new, is_active, type, logo, description, message, open_source, started_at, development_status, hardware_wallet, proof_type, org_structure, hash_algorithm, first_data_at, last_data_at };
 
-    
     return newJsonObject;
   } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
+    console.error('Error fetching data:', error.message);
+    throw new Error('Failed to fetch data from the API');
   }
 }
 
-app.get('/', async (req, res) => {
+app.get('/:id', async (req, res) => {
   try {
-    const data = await fetchData();
+    const coinId = req.params.id;
+    const data = await fetchData(coinId);
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: error.message });
   }
-}
-
-);
-
-
-
-app.get('/about',async(req,res)=>{
-    console.log('working');
-    res.send("nothing");
 });
 
-// });
-
-
-
-app.listen(port, function () {
-  console.log(`Example app listening on port ${port}!`);
+app.get('/about', async (req, res) => {
+  console.log('Endpoint: /about');
+  res.send("About page content goes here");
 });
 
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
